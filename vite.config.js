@@ -2,7 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 // IP da sua instância AWS (onde rodam o Orion e o STH-Comet)
-const HOST = '3.238.18.175'
+// (no Vercel, o IP vem da variável de ambiente FIWARE_HOST; aqui ela também vale no npm run dev)
+const HOST = process.env.FIWARE_HOST || '3.238.18.175'
 
 export default defineConfig({
   plugins: [react()],

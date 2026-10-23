@@ -82,7 +82,10 @@ O arquivo `firmware/vinheria/diagram.json` reproduz esta montagem no simulador W
 │       ├── vinheria.ino  # firmware do ESP32
 │       ├── diagram.json  # circuito do Wokwi
 │       └── libraries.txt # bibliotecas do Wokwi
-├── vite.config.js        # proxy para o servidor FIWARE
+├── api/
+│   └── proxy.js          # proxy do Vercel para o servidor FIWARE
+├── vercel.json           # redireciona /orion, /iota e /sth para api/proxy.js
+├── vite.config.js        # proxy para o servidor FIWARE (npm run dev)
 ├── package.json
 ├── README.md
 └── src/
@@ -152,6 +155,21 @@ Grave no ESP32 e abra o Monitor Serial a 115200 baud para acompanhar.
 ### Simulação no Wokwi
 
 Cole o conteúdo de `firmware/vinheria/diagram.json` e `firmware/vinheria/libraries.txt` no projeto, deixe `SIMULACAO_WOKWI` em `1` e use `Wokwi-GUEST` como rede, com senha vazia. O Wokwi só simula o DHT22. Por isso, o tipo do sensor muda conforme essa chave.
+
+### Publicar no Vercel (acesso pelo celular)
+
+O proxy do `vite.config.js` só existe no `npm run dev`. No Vercel, quem faz esse papel é a função `api/proxy.js`, ligada pelo `vercel.json`. Ela também resolve o bloqueio de conteúdo misto: o site no Vercel usa HTTPS e o servidor FIWARE responde em HTTP, então o navegador não pode chamá-lo direto.
+
+1. No Vercel, abra o projeto e vá em **Settings → Environment Variables**.
+2. Crie a variável `FIWARE_HOST` com o IP público do servidor (por exemplo, `44.199.198.20`), sem `http://` e sem porta. Marque Production, Preview e Development.
+3. Faça um novo deploy (**Deployments → ⋯ → Redeploy**). Variáveis só valem para deploys feitos depois de criadas.
+4. Abra o endereço do projeto no celular. No painel, em **Conexão**, confira o ID da entidade, o `fiware-service` e o IP do servidor.
+
+Quando o IP da instância mudar, atualize `FIWARE_HOST`, faça um novo deploy e rode **Configurar o que falta** na aba FIWARE. Com um Elastic IP na AWS, o IP deixa de mudar e esse passo some.
+
+Se o painel mostrar `502` ou `504`, a função não alcançou o servidor: confira se a instância está ligada, se o IP em `FIWARE_HOST` está certo e se as portas `1026`, `4041` e `8666` estão liberadas no Security Group. Um `500` indica que `FIWARE_HOST` não foi configurada.
+
+O painel só consulta o servidor com a aba visível, o que poupa bateria no celular e chamadas da função.
 
 ## Usando o painel
 

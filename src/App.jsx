@@ -144,17 +144,25 @@ function useFiware(cfg) {
 
     const ctrl = new AbortController()
     let timer
+    // No celular, não consulta com a aba em segundo plano e atualiza ao voltar
+    const onVisible = () => {
+      if (!document.hidden) poll(ctrl.signal)
+    }
     log(`Consultando ${cfg.entity}`)
     ;(async () => {
       await loadHistory(ctrl.signal)
       await poll(ctrl.signal)
       if (ctrl.signal.aborted) return
-      timer = setInterval(() => poll(ctrl.signal), POLL_MS)
+      timer = setInterval(() => {
+        if (!document.hidden) poll(ctrl.signal)
+      }, POLL_MS)
+      document.addEventListener('visibilitychange', onVisible)
     })()
 
     return () => {
       ctrl.abort()
       clearInterval(timer)
+      document.removeEventListener('visibilitychange', onVisible)
     }
   }, [cfg, loadHistory, poll, log])
 
@@ -273,7 +281,7 @@ function SettingsDialog({ cfg, onSave, onClose }) {
         </label>
         <p className="hint">
           Use o mesmo ID e o mesmo serviço do Postman. O IP é usado nos cadastros da aba FIWARE e deve ser o
-          mesmo do vite.config.js.
+          mesmo do vite.config.js (local) ou da variável FIWARE_HOST (Vercel).
         </p>
         <div className="actions">
           <button type="button" className="ghost" onClick={() => ref.current.close()}>

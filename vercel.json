@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/orion/:path*", "destination": "/api/proxy?svc=orion&p=:path*" },
+    { "source": "/iota/:path*", "destination": "/api/proxy?svc=iota&p=:path*" },
+    { "source": "/sth/:path*", "destination": "/api/proxy?svc=sth&p=:path*" }
+  ]
+}
