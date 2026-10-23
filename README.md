@@ -1,5 +1,7 @@
 # Adega Monitor – Monitoramento de vinheria com ESP32 e FIWARE
 
+**Painel online:** https://vinheria-full.vercel.app
+
 Sistema de IoT que monitora **temperatura, umidade e luminosidade** de uma adega e avisa quando algum valor sai da faixa ideal do vinho armazenado. Um ESP32 lê os sensores e publica os dados via MQTT. A plataforma FIWARE guarda os valores e o histórico, e um painel web mostra tudo em tempo real e permite controlar o dispositivo remotamente.
 
 ## Como funciona
