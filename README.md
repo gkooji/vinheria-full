@@ -19,6 +19,20 @@ Sistema de IoT que monitora **temperatura, umidade e luminosidade** de uma adega
 - O **STH-Comet** guarda o histórico usado nos gráficos.
 - O **painel web** consulta o Orion a cada 3 segundos, mostra as leituras e envia comandos.
 
+## Arquitetura em camadas
+
+![Arquitetura em camadas do Adega Monitor](docs/arquitetura.png)
+
+O sistema segue o modelo de referência do FIWARE, dividido em três camadas:
+
+| Camada | Componentes | Função |
+|---|---|---|
+| **Application** | Painel web (React + Vite) | Mostra as leituras, envia comandos e configura o servidor. Fala com o Orion (porta 1026) e com o IoT Agent (porta 4041), pelo proxy do Vite |
+| **Back-end** | Orion, STH-Comet, IoT Agent MQTT, MongoDB e broker Mosquitto | Guarda o estado atual (Orion) e o histórico (STH-Comet com MongoDB), traduz o MQTT para NGSIv2 (IoT Agent) e transporta as mensagens (Mosquitto, porta 1883) |
+| **IoT** | ESP32, sensores (DHT11 e LDR), LEDs, buzzer, LCD e botão | Lê o ambiente, publica as leituras via MQTT, recebe comandos e dispara os alertas locais |
+
+As ligações entre as camadas usam NGSIv2 (painel e Orion), MQTT (IoT Agent, broker e ESP32) e MongoDB (STH-Comet e IoT Agent com seus bancos).
+
 ## Funcionalidades
 
 - Leitura de temperatura e umidade (DHT11), luminosidade (LDR) e exibição em um LCD 16x2.
@@ -55,16 +69,22 @@ Sistema de IoT que monitora **temperatura, umidade e luminosidade** de uma adega
 | Botão | GPIO 4 (usa pull-up interno) |
 | LCD I2C (SDA / SCL) | GPIO 21 / GPIO 22 |
 
-O arquivo `diagram.json` reproduz esta montagem no simulador Wokwi.
+O arquivo `firmware/vinheria/diagram.json` reproduz esta montagem no simulador Wokwi.
 
 ## Estrutura do projeto
 
 ```
 .
-├── vinheria.ino          # firmware do ESP32
-├── diagram.json          # circuito do Wokwi
-├── libraries.txt         # bibliotecas do Wokwi
+├── docs/
+│   └── arquitetura.png   # diagrama da arquitetura em camadas
+├── firmware/
+│   └── vinheria/
+│       ├── vinheria.ino  # firmware do ESP32
+│       ├── diagram.json  # circuito do Wokwi
+│       └── libraries.txt # bibliotecas do Wokwi
 ├── vite.config.js        # proxy para o servidor FIWARE
+├── package.json
+├── README.md
 └── src/
     ├── main.jsx
     ├── App.jsx           # painel, controles, conexão e comunicação com o FIWARE
@@ -117,7 +137,7 @@ Se o IP do servidor mudar, as etapas que guardam o IP aparecem como **Pendente**
 
 ### 3. ESP32
 
-Abra `vinheria.ino` e ajuste o bloco de configuração:
+Abra `firmware/vinheria/vinheria.ino` e ajuste o bloco de configuração:
 
 ```cpp
 #define SIMULACAO_WOKWI 0                  // 0 = ESP32 físico (DHT11), 1 = Wokwi (DHT22)
@@ -131,7 +151,7 @@ Grave no ESP32 e abra o Monitor Serial a 115200 baud para acompanhar.
 
 ### Simulação no Wokwi
 
-Cole o conteúdo de `diagram.json` e `libraries.txt` no projeto, deixe `SIMULACAO_WOKWI` em `1` e use `Wokwi-GUEST` como rede, com senha vazia. O Wokwi só simula o DHT22. Por isso, o tipo do sensor muda conforme essa chave.
+Cole o conteúdo de `firmware/vinheria/diagram.json` e `firmware/vinheria/libraries.txt` no projeto, deixe `SIMULACAO_WOKWI` em `1` e use `Wokwi-GUEST` como rede, com senha vazia. O Wokwi só simula o DHT22. Por isso, o tipo do sensor muda conforme essa chave.
 
 ## Usando o painel
 
@@ -225,11 +245,12 @@ O Orion rejeita os caracteres `; < > " ' = ( )` em valores. Por isso o comando `
 
 ## Créditos
 
-O firmware parte de um sketch de Fábio Henrique Cabrini. O painel e os demais ajustes foram desenvolvidos para este projeto.
+O firmware parte de um sketch de Fábio Henrique Cabrini. O painel e os demais ajustes foram desenvolvidos pela equipe para este projeto.
 
-Equipe:
-Guilherme Kooji Kubota ............... RM 570541
-Victor da Silva Souto ................ RM 571093
-Luis Carlos Pageu Domingues .......... RM 569214
-João Paulo Francisco de Oliveira ..... RM 571306
-Eduardo Menzel ....................... RM 570405
+| Integrante | RM |
+|---|---|
+| Guilherme Kooji Kubota | 570541 |
+| Victor da Silva Souto | 571093 |
+| Luis Carlos Pageu Domingues | 569214 |
+| João Paulo Francisco de Oliveira | 571306 |
+| Eduardo Menzel | 570405 |
