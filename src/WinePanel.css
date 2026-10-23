@@ -1,0 +1,69 @@
+.wines { display: grid; gap: 20px; }
+
+/* ---------- seletor de vinhos ---------- */
+.wine-bar { padding: 14px 18px; }
+.wine-chips { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.wine-chip {
+  padding: 8px 16px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  background: transparent;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wine-chip:hover { border-color: var(--brass); }
+.wine-chip.on { background: var(--brass); border-color: var(--brass); color: #2a0a15; font-weight: 700; }
+
+/* ---------- estado vazio ---------- */
+.empty p { color: var(--mute); max-width: 56ch; margin: 8px 0 18px; }
+.presets { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ---------- cabeçalho do vinho ---------- */
+.wine-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.wine-name { font: 600 clamp(1.5rem, 4vw, 2.2rem) / 1.1 var(--serif); letter-spacing: -0.01em; }
+.wine-notes { margin-top: 8px; font-size: 0.9rem; font-style: italic; color: var(--mute); }
+.wine-actions { display: flex; gap: 10px; }
+.ghost.danger:hover { border-color: var(--bad); color: var(--bad); }
+
+/* ---------- veredito ---------- */
+.verdict {
+  padding: 16px 20px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--mute);
+}
+.verdict b { color: var(--ink); font-weight: 500; }
+.verdict ul { margin: 6px 0 0 18px; font-size: 0.92rem; }
+.verdict.ok { border-color: var(--ok); background: rgba(143, 201, 160, 0.1); }
+.verdict.ok b { color: var(--ok); }
+.verdict.bad { border-color: var(--bad); background: rgba(255, 116, 102, 0.1); }
+.verdict.bad b { color: var(--bad); }
+
+/* ---------- tabela de resumo ---------- */
+.table-wrap { overflow-x: auto; margin-top: 10px; }
+.stats { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.stats th, .stats td { padding: 10px 12px; text-align: left; border-top: 1px solid var(--line); white-space: nowrap; }
+.stats th { border-top: 0; font-weight: 500; color: var(--mute); font-size: 0.82rem; }
+
+/* ---------- formulário ---------- */
+dialog.wide { width: min(520px, 92vw); max-height: 92vh; overflow: auto; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+select, textarea {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 9px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--ink);
+  font: inherit;
+}
+select option { background: #33101d; }
+textarea { resize: vertical; }
+.err { margin-top: 8px; font-size: 0.85rem; color: var(--bad); }
+
+@media (max-width: 520px) { .pair { grid-template-columns: 1fr; } }
